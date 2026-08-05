@@ -17,7 +17,7 @@ export default function Login() {
   const [busy, setBusy] = useState(false);
 
   // Checkout sends people here mid-order; return them to where they left off.
-  const redirectTo = location.state?.from ?? '/';
+  const redirectTo = location.state?.from ?? '/menu';
 
   const submit = async (event) => {
     event.preventDefault();

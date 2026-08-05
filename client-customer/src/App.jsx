@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import CartSheet from './components/CartSheet';
 import StickyCartBar from './components/StickyCartBar';
+import Landing from './pages/Landing';
 import Menu from './pages/Menu';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -21,8 +22,9 @@ export default function App() {
     window.scrollTo({ top: 0 });
   }, [pathname]);
 
-  // The cart bar would only duplicate what checkout already shows.
-  const showCartBar = pathname !== '/checkout';
+  // The cart bar would only duplicate what checkout already shows, and the
+  // landing page is for people who haven't started an order yet.
+  const showCartBar = pathname !== '/checkout' && pathname !== '/';
 
   return (
     <>
@@ -30,7 +32,8 @@ export default function App() {
 
       <main>
         <Routes>
-          <Route path="/" element={<Menu />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/menu" element={<Menu />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/checkout" element={<Checkout />} />

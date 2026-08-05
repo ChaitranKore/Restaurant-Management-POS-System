@@ -23,7 +23,7 @@ export default function Register() {
     try {
       const user = await register(form);
       toast.success(`Welcome, ${user.name.split(' ')[0]}`);
-      navigate('/', { replace: true });
+      navigate('/menu', { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'Could not create your account.');
     } finally {

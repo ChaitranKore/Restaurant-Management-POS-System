@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "setup": "node src/scripts/installSchema.js"
+    "setup": "node src/scripts/installSchema.js",
+    "seed:demo": "node src/scripts/seedDemo.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -23,6 +24,6 @@
     "nodemon": "^3.1.4"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   }
 }

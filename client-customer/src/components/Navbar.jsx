@@ -47,7 +47,7 @@ export default function Navbar({ onOpenCart }) {
         </Link>
 
         <div className="hidden items-center gap-0.5 sm:flex">
-          <NavLink to="/" end className={navLinkClass}>
+          <NavLink to="/menu" className={navLinkClass}>
             Menu
           </NavLink>
           {user ? (

@@ -107,7 +107,7 @@ export default function OrderHistory() {
           description="When you place your first order it'll appear here, with live kitchen updates."
           action={
             <Button asChild>
-              <Link to="/">Browse the menu</Link>
+              <Link to="/menu">Browse the menu</Link>
             </Button>
           }
         />

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChefHat, LayoutDashboard, ShieldCheck, UtensilsCrossed } from 'lucide-react';
+import { ArrowRight, ChefHat, LayoutDashboard, Loader2, ShieldCheck, UtensilsCrossed } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Field } from '@/components/ui/label';
@@ -14,6 +14,23 @@ const HIGHLIGHTS = [
   { icon: ShieldCheck, title: 'Role-based access', blurb: 'Enforced server-side on every route.' },
 ];
 
+/* Seeded by `npm run seed:demo`. Read-only in spirit — the demo database is
+   reset on every deploy, so anything a visitor changes is temporary. */
+const DEMO_ACCOUNTS = [
+  {
+    role: 'Admin',
+    email: 'admin@tableside.demo',
+    password: 'demo1234',
+    blurb: 'Full access — menu, staff, payments',
+  },
+  {
+    role: 'Staff',
+    email: 'staff@tableside.demo',
+    password: 'demo1234',
+    blurb: 'Kitchen board and POS only',
+  },
+];
+
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -21,19 +38,39 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [demoBusy, setDemoBusy] = useState('');
+
+  const signIn = async (emailValue, passwordValue) => {
+    setError('');
+    const user = await login(emailValue, passwordValue);
+    toast.success(`Welcome back, ${user.name.split(' ')[0]}`);
+    navigate('/', { replace: true });
+  };
 
   const submit = async (event) => {
     event.preventDefault();
-    setError('');
     setBusy(true);
     try {
-      const user = await login(email, password);
-      toast.success(`Welcome back, ${user.name.split(' ')[0]}`);
-      navigate('/', { replace: true });
+      await signIn(email, password);
     } catch (err) {
       setError(err.response?.data?.message || 'Those details did not match an account.');
     } finally {
       setBusy(false);
+    }
+  };
+
+  const enterAsDemo = async (account) => {
+    setDemoBusy(account.role);
+    try {
+      await signIn(account.email, account.password);
+    } catch (err) {
+      // The demo accounts only exist once the demo seed has been run.
+      setError(
+        err.response?.data?.message ||
+          'Demo account unavailable — run `npm run seed:demo` on the server.'
+      );
+    } finally {
+      setDemoBusy('');
     }
   };
 
@@ -97,6 +134,49 @@ export default function Login() {
               Sign in
             </Button>
           </form>
+
+          <div className="mt-8">
+            <div className="flex items-center gap-3">
+              <span className="h-px flex-1 bg-border" />
+              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Or explore the demo
+              </span>
+              <span className="h-px flex-1 bg-border" />
+            </div>
+
+            <div className="mt-4 grid gap-2">
+              {DEMO_ACCOUNTS.map((account) => (
+                <button
+                  key={account.role}
+                  type="button"
+                  onClick={() => enterAsDemo(account)}
+                  disabled={Boolean(demoBusy)}
+                  className="flex items-center gap-3 rounded-lg border border-border bg-card p-3 text-left transition-all hover:border-primary/45 hover:shadow-sm disabled:opacity-60"
+                >
+                  <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
+                    {account.role === 'Admin' ? (
+                      <ShieldCheck className="size-4.5" aria-hidden="true" />
+                    ) : (
+                      <ChefHat className="size-4.5" aria-hidden="true" />
+                    )}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-semibold">Enter as {account.role}</span>
+                    <span className="block text-xs text-muted-foreground">{account.blurb}</span>
+                  </span>
+                  {demoBusy === account.role ? (
+                    <Loader2 className="size-4 shrink-0 animate-spin text-muted-foreground" />
+                  ) : (
+                    <ArrowRight className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+                  )}
+                </button>
+              ))}
+            </div>
+
+            <p className="mt-3 text-center text-xs text-muted-foreground text-pretty">
+              Demo data resets on every deploy — nothing you do here is permanent.
+            </p>
+          </div>
         </div>
       </div>
 

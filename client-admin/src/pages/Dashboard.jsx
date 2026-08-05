@@ -235,6 +235,7 @@ export default function Dashboard() {
                         type="monotone"
                         dataKey="total"
                         name="Revenue"
+                        isAnimationActive={false}
                         stroke={palette.series[0]}
                         strokeWidth={2}
                         fill="url(#revenueFill)"
@@ -341,7 +342,7 @@ export default function Dashboard() {
                           <ChartTooltip labelFormatter={(label) => `${label} · orders placed`} />
                         }
                       />
-                      <Bar dataKey="count" name="Orders" fill={palette.series[1]} radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="count" name="Orders" fill={palette.series[1]} radius={[4, 4, 0, 0]} isAnimationActive={false} />
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
@@ -376,7 +377,7 @@ export default function Dashboard() {
                         cursor={{ fill: palette.grid, opacity: 0.35 }}
                         content={<ChartTooltip formatter={(value) => `${value} sold`} />}
                       />
-                      <Bar dataKey="quantity" name="Sold" fill={palette.series[4]} radius={[0, 4, 4, 0]} />
+                      <Bar dataKey="quantity" name="Sold" fill={palette.series[4]} radius={[0, 4, 4, 0]} isAnimationActive={false} />
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (

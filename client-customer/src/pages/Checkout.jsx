@@ -115,7 +115,7 @@ export default function Checkout() {
           description="Once you add a few dishes from the menu, they'll show up here ready to order."
           action={
             <Button asChild>
-              <Link to="/">Browse the menu</Link>
+              <Link to="/menu">Browse the menu</Link>
             </Button>
           }
         />
@@ -126,7 +126,7 @@ export default function Checkout() {
   return (
     <div className="mx-auto max-w-6xl px-4 pb-24 pt-8 sm:pb-12">
       <Button variant="ghost" size="sm" asChild className="-ml-2 mb-4 text-muted-foreground">
-        <Link to="/">
+        <Link to="/menu">
           <ArrowLeft />
           Back to menu
         </Link>

@@ -1,0 +1,60 @@
+# Render blueprint for the API.
+#
+# The Express server is deployed as a long-running web service rather than a
+# serverless function: Socket.IO needs a persistent connection, and serverless
+# platforms terminate idle ones. Both React clients deploy separately to Vercel
+# (see client-*/vercel.json); only the API lives here.
+#
+# After the first deploy, set these in the Render dashboard:
+#   MONGO_URI       your MongoDB Atlas connection string
+#   CLIENT_ORIGINS  the two Vercel URLs, comma-separated, no trailing slashes
+#
+# Note: on Render's free tier the service sleeps after ~15 minutes idle and the
+# next request pays a cold start of roughly a minute. For a link on a CV that is
+# the difference between a recruiter waiting and a recruiter leaving — either use
+# a paid instance or keep it warm with an external uptime pinger against /api/health.
+services:
+  - type: web
+    name: tableside-api
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: '20'
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: '5000'
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      # Generated once by Render and kept stable across deploys, so existing
+      # tokens are not invalidated every time the service redeploys.
+      - key: JWT_SECRET
+        generateValue: true
+      # Set these two by hand — they are environment-specific.
+      - key: MONGO_URI
+        sync: false
+      - key: CLIENT_ORIGINS
+        sync: false
+
+  # Reseeds the demo hourly. The live kitchen tickets are seeded at fixed ages,
+  # so without this they keep ageing: a visitor arriving three hours after a
+  # deploy finds a board where every ticket is red and the "today" charts have
+  # rolled into yesterday. It also undoes anything a visitor changed.
+  - type: cron
+    name: tableside-demo-reset
+    runtime: node
+    plan: free
+    rootDir: server
+    schedule: '0 * * * *'
+    buildCommand: npm ci
+    startCommand: npm run seed:demo
+    envVars:
+      - key: NODE_VERSION
+        value: '20'
+      - key: MONGO_URI
+        sync: false
