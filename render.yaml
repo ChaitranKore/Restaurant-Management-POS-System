@@ -20,15 +20,20 @@ services:
     plan: free
     rootDir: server
     buildCommand: npm ci
-    startCommand: npm start
+    # `setup` builds the indexes and seeds categories, menu, tables and the
+    # default admin — it is idempotent, so running it on every boot is safe.
+    # Without it the service starts against a completely empty Atlas database:
+    # no menu, no tables, and the demo seeder refuses to run.
+    startCommand: npm run setup && npm start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_VERSION
         value: '20'
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: '5000'
+      # PORT is deliberately not set — Render injects it, and the server reads
+      # process.env.PORT. Hardcoding it here would override what Render expects
+      # the service to be listening on.
       - key: JWT_EXPIRES_IN
         value: 7d
       # Generated once by Render and kept stable across deploys, so existing
