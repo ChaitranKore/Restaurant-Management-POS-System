@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-const STORAGE_KEY = 'ember-theme';
+const STORAGE_KEY = 'tableside-theme';
 const ThemeContext = createContext(null);
 
 function readStored() {

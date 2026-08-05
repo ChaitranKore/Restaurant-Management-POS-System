@@ -79,15 +79,23 @@ async function seedCategoriesAndMenu() {
   ]);
   const byName = Object.fromEntries(categories.map((c) => [c.name, c._id]));
 
+  // The customer menu is photo-first, so every seeded item carries an image.
+  // Sources are Unsplash's CDN and Wikimedia Commons — both hotlinkable and
+  // freely licensed. Each URL below was checked to be the dish it claims to be;
+  // an item with no imageUrl falls back to a placeholder card in the UI rather
+  // than a broken image, so admin-created items degrade gracefully.
+  const unsplash = (id) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=800&q=70`;
+  const commons = (path) => `https://upload.wikimedia.org/wikipedia/commons/thumb/${path}`;
+
   await MenuItem.insertMany([
-    { name: 'Spring Rolls', description: 'Crispy vegetable spring rolls', price: 5.99, category: byName['Appetizers'], prepTimeMinutes: 8 },
-    { name: 'Garlic Bread', description: 'Toasted bread with garlic butter', price: 4.49, category: byName['Appetizers'], prepTimeMinutes: 6 },
-    { name: 'Margherita Pizza', description: 'Classic tomato, mozzarella and basil', price: 11.99, category: byName['Main Course'], prepTimeMinutes: 15 },
-    { name: 'Grilled Chicken', description: 'Grilled chicken breast with roasted vegetables', price: 13.49, category: byName['Main Course'], isVeg: false, prepTimeMinutes: 18 },
-    { name: 'Paneer Tikka Masala', description: 'Paneer in a rich tomato gravy', price: 10.99, category: byName['Main Course'], prepTimeMinutes: 16 },
-    { name: 'Iced Tea', description: 'Freshly brewed iced tea', price: 2.99, category: byName['Beverages'], prepTimeMinutes: 3 },
-    { name: 'Fresh Lime Soda', description: 'Sweet, salted, or plain', price: 2.49, category: byName['Beverages'], prepTimeMinutes: 3 },
-    { name: 'Chocolate Brownie', description: 'Warm brownie with vanilla ice cream', price: 5.49, category: byName['Desserts'], prepTimeMinutes: 7 },
+    { name: 'Spring Rolls', description: 'Crispy vegetable spring rolls', price: 5.99, category: byName['Appetizers'], prepTimeMinutes: 8, imageUrl: commons('4/4e/Golden_Vegetable_Spring_Rolls_Served_with_Dipping_Sauce.jpg/960px-Golden_Vegetable_Spring_Rolls_Served_with_Dipping_Sauce.jpg') },
+    { name: 'Garlic Bread', description: 'Toasted bread with garlic butter', price: 4.49, category: byName['Appetizers'], prepTimeMinutes: 6, imageUrl: commons('e/ee/Garlic_bread_-_on_plate%2C_ready_to_eat.jpg/960px-Garlic_bread_-_on_plate%2C_ready_to_eat.jpg') },
+    { name: 'Margherita Pizza', description: 'Classic tomato, mozzarella and basil', price: 11.99, category: byName['Main Course'], prepTimeMinutes: 15, imageUrl: unsplash('1604068549290-dea0e4a305ca') },
+    { name: 'Grilled Chicken', description: 'Grilled chicken breast with roasted vegetables', price: 13.49, category: byName['Main Course'], isVeg: false, prepTimeMinutes: 18, imageUrl: commons('d/d6/Liat_Portal_for_Foodie_Disorder_-_Grilled_Chicken_with_Roasted_Vegetables.jpg/960px-Liat_Portal_for_Foodie_Disorder_-_Grilled_Chicken_with_Roasted_Vegetables.jpg') },
+    { name: 'Paneer Tikka Masala', description: 'Paneer in a rich tomato gravy', price: 10.99, category: byName['Main Course'], prepTimeMinutes: 16, imageUrl: unsplash('1631452180519-c014fe946bc7') },
+    { name: 'Iced Tea', description: 'Freshly brewed iced tea', price: 2.99, category: byName['Beverages'], prepTimeMinutes: 3, imageUrl: unsplash('1499638673689-79a0b5115d87') },
+    { name: 'Fresh Lime Soda', description: 'Sweet, salted, or plain', price: 2.49, category: byName['Beverages'], prepTimeMinutes: 3, imageUrl: commons('b/ba/Glass_sparkling_lemonade.jpg/960px-Glass_sparkling_lemonade.jpg') },
+    { name: 'Chocolate Brownie', description: 'Warm brownie with vanilla ice cream', price: 5.49, category: byName['Desserts'], prepTimeMinutes: 7, imageUrl: unsplash('1606313564200-e75d5e30476c') },
   ]);
   console.log('Sample menu seeded.');
 }

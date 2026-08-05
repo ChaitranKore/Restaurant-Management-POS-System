@@ -1,6 +1,3 @@
-/* theme.css owns every design token and the base layer.
-   legacy.css is the outgoing stylesheet and is deleted once the redesign
-   lands on every page — it is unlayered, so it still wins over Tailwind's
-   base layer for pages that have not been rebuilt yet. */
+/* theme.css owns every design token, the base layer and the shared utilities.
+   The customer app is fully migrated, so the old hand-rolled stylesheet is gone. */
 @import './styles/theme.css';
-@import './styles/legacy.css';

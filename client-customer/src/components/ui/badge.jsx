@@ -54,7 +54,7 @@ function StatusBadge({ status, className, pulse = false, ...props }) {
       )}
       {...props}
     >
-      {pulse ? <span className="size-1.5 rounded-full bg-current animate-ember-pulse" /> : null}
+      {pulse ? <span className="size-1.5 rounded-full bg-current animate-pulse-soft" /> : null}
       {STATUS_LABELS[status] ?? status}
     </span>
   );

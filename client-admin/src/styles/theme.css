@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------------------------
- * Ember — shared design tokens for the Restaurant POS platform.
+ * TableSide — shared design tokens for the Restaurant POS platform.
  *
  * SHARED FILE. An identical copy lives at client-admin/src/styles/theme.css.
  * The two clients deploy independently (separate Vercel projects, separate
@@ -299,7 +299,7 @@
 
 @layer utilities {
   /* Used by the KDS ticket board and the customer tracking timeline. */
-  @keyframes ember-pulse {
+  @keyframes pulse-soft {
     0%,
     100% {
       opacity: 1;
@@ -309,7 +309,7 @@
     }
   }
 
-  @keyframes ember-ping {
+  @keyframes ping-ring {
     0% {
       box-shadow: 0 0 0 0 color-mix(in oklch, var(--primary) 55%, transparent);
     }
@@ -318,18 +318,18 @@
     }
   }
 
-  @keyframes ember-shimmer {
+  @keyframes shimmer-sweep {
     100% {
       transform: translateX(100%);
     }
   }
 
-  .animate-ember-pulse {
-    animation: ember-pulse 1.6s ease-in-out infinite;
+  .animate-pulse-soft {
+    animation: pulse-soft 1.6s ease-in-out infinite;
   }
 
-  .animate-ember-ping {
-    animation: ember-ping 1.6s ease-out infinite;
+  .animate-ping-ring {
+    animation: ping-ring 1.6s ease-out infinite;
   }
 
   /* Skeletons: a moving highlight reads as "loading" far better than a
@@ -350,7 +350,7 @@
       color-mix(in oklch, var(--foreground) 7%, transparent),
       transparent
     );
-    animation: ember-shimmer 1.6s infinite;
+    animation: shimmer-sweep 1.6s infinite;
   }
 }
 

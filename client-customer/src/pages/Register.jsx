@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import AuthLayout from '@/components/AuthLayout';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Field } from '@/components/ui/label';
+import { toast } from '@/components/ui/toast';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Register() {
   const { register } = useAuth();
@@ -9,50 +14,97 @@ export default function Register() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
-  const update = (field) => (e) => setForm({ ...form, [field]: e.target.value });
+  const update = (field) => (event) => setForm({ ...form, [field]: event.target.value });
 
-  const submit = async (e) => {
-    e.preventDefault();
+  const submit = async (event) => {
+    event.preventDefault();
     setError('');
     setBusy(true);
     try {
-      await register(form);
-      navigate('/');
+      const user = await register(form);
+      toast.success(`Welcome, ${user.name.split(' ')[0]}`);
+      navigate('/', { replace: true });
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
+      setError(err.response?.data?.message || 'Could not create your account.');
     } finally {
       setBusy(false);
     }
   };
 
   return (
-    <div className="container page">
-      <form className="form" onSubmit={submit}>
-        <h2>Create your account</h2>
-        {error && <p className="error">{error}</p>}
-        <div>
-          <label>Full name</label>
-          <input value={form.name} onChange={update('name')} required />
-        </div>
-        <div>
-          <label>Email</label>
-          <input type="email" value={form.email} onChange={update('email')} required />
-        </div>
-        <div>
-          <label>Phone (optional)</label>
-          <input value={form.phone} onChange={update('phone')} />
-        </div>
-        <div>
-          <label>Password</label>
-          <input type="password" minLength={6} value={form.password} onChange={update('password')} required />
-        </div>
-        <button className="btn" type="submit" disabled={busy}>
-          {busy ? 'Creating account...' : 'Sign up'}
-        </button>
-        <p>
-          Already have an account? <Link to="/login">Login</Link>
-        </p>
+    <AuthLayout
+      title="Create your account"
+      subtitle="It takes a moment, and then your orders are tracked end to end."
+      footer={
+        <>
+          <span className="text-muted-foreground">Already have an account? </span>
+          <Link to="/login" className="font-semibold text-primary hover:underline">
+            Log in
+          </Link>
+        </>
+      }
+    >
+      <form onSubmit={submit} className="space-y-4" noValidate>
+        {error ? (
+          <p
+            role="alert"
+            className="rounded-lg border border-destructive/30 bg-destructive/8 px-3 py-2 text-sm font-medium text-destructive"
+          >
+            {error}
+          </p>
+        ) : null}
+
+        <Field label="Full name" htmlFor="name">
+          <Input
+            id="name"
+            autoComplete="name"
+            placeholder="Priya Nair"
+            value={form.name}
+            onChange={update('name')}
+            required
+          />
+        </Field>
+
+        <Field label="Email" htmlFor="email">
+          <Input
+            id="email"
+            type="email"
+            autoComplete="email"
+            placeholder="you@example.com"
+            value={form.email}
+            onChange={update('email')}
+            required
+          />
+        </Field>
+
+        <Field label="Phone" htmlFor="phone" hint="Optional — used only if we need to reach you.">
+          <Input
+            id="phone"
+            type="tel"
+            autoComplete="tel"
+            placeholder="+91 98765 43210"
+            value={form.phone}
+            onChange={update('phone')}
+          />
+        </Field>
+
+        <Field label="Password" htmlFor="password" hint="At least 6 characters.">
+          <Input
+            id="password"
+            type="password"
+            autoComplete="new-password"
+            minLength={6}
+            placeholder="••••••••"
+            value={form.password}
+            onChange={update('password')}
+            required
+          />
+        </Field>
+
+        <Button type="submit" size="lg" block loading={busy}>
+          Create account
+        </Button>
       </form>
-    </div>
+    </AuthLayout>
   );
 }
