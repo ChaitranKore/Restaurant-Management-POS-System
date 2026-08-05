@@ -10,6 +10,20 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Split the heavy, rarely-changing dependencies out of the app chunk so
+        // a UI tweak doesn't invalidate 1MB of vendor code in everyone's cache.
+        // Recharts in particular is only needed by the dashboard.
+        manualChunks: {
+          react: ['react', 'react-dom', 'react-router-dom'],
+          charts: ['recharts'],
+          motion: ['motion'],
+        },
+      },
+    },
+  },
   server: {
     port: 5174,
   },

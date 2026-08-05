@@ -6,12 +6,12 @@ const listMenuItems = asyncHandler(async (req, res) => {
   if (req.query.category) filter.category = req.query.category;
   if (req.query.all !== 'true') filter.isAvailable = true;
 
-  const items = await MenuItem.find(filter).populate('category', 'name').sort({ name: 1 });
+  const items = await MenuItem.find(filter).populate('category', 'name displayOrder').sort({ name: 1 });
   res.json(items);
 });
 
 const getMenuItem = asyncHandler(async (req, res) => {
-  const item = await MenuItem.findById(req.params.id).populate('category', 'name');
+  const item = await MenuItem.findById(req.params.id).populate('category', 'name displayOrder');
   if (!item) return res.status(404).json({ message: 'Menu item not found' });
   res.json(item);
 });
