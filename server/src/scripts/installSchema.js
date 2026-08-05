@@ -16,6 +16,17 @@ const ENV_PATH = path.resolve(__dirname, '../../.env');
 const ENV_EXAMPLE_PATH = path.resolve(__dirname, '../../.env.example');
 
 function ensureEnvFile() {
+  // A hosted environment supplies its config through real environment
+  // variables. Writing a .env there is worse than useless: `.env.example`
+  // carries localhost defaults and the literal JWT_SECRET=change_this_secret,
+  // so any variable the platform *didn't* set would silently fall back to a
+  // value that is public in this repository — signing production tokens with a
+  // known secret rather than failing loudly. Only scaffold for local dev.
+  if (process.env.MONGO_URI || process.env.NODE_ENV === 'production') {
+    console.log('Environment already configured — not writing a .env file.');
+    return;
+  }
+
   if (fs.existsSync(ENV_PATH)) {
     console.log('.env already exists — leaving it untouched.');
     return;
@@ -30,7 +41,10 @@ function ensureEnvFile() {
 }
 
 ensureEnvFile();
-require('dotenv').config({ path: ENV_PATH });
+// `override` is false by default, so real environment variables always win over
+// anything in the file. Kept explicit because the whole safety of the above
+// depends on it.
+require('dotenv').config({ path: ENV_PATH, override: false });
 
 const mongoose = require('mongoose');
 const connectDB = require('../config/db');
