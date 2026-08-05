@@ -180,8 +180,17 @@ does not invalidate the JWT of anyone signed in at the time.
 
 **Re-run it on a schedule for a public demo.** The live tickets are seeded at
 fixed ages and keep ageing afterwards — leave it a few hours and every ticket on
-the board reads red, and "today's" orders roll into yesterday. `render.yaml`
-includes an hourly cron service that does this.
+the board reads red, and "today's" orders roll into yesterday.
+
+`.github/workflows/demo-reset.yml` does this hourly via GitHub Actions, and can
+also be run on demand from the Actions tab. It needs one repository secret,
+`MONGO_URI` (Settings → Secrets and variables → Actions), holding the same
+connection string the API uses. It lives there rather than in `render.yaml`
+because Render's cron job is a paid service type, and a self-hosted reset
+endpoint would mean exposing a "wipe the database" URL to the internet.
+
+GitHub disables scheduled workflows on repositories with no activity for 60
+days — if the demo looks stale, check the schedule hasn't been paused.
 
 ## Deploying
 

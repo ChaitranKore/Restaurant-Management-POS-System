@@ -51,21 +51,7 @@ services:
       - key: CLIENT_ORIGINS
         sync: false
 
-  # Reseeds the demo hourly. The live kitchen tickets are seeded at fixed ages,
-  # so without this they keep ageing: a visitor arriving three hours after a
-  # deploy finds a board where every ticket is red and the "today" charts have
-  # rolled into yesterday. It also undoes anything a visitor changed.
-  - type: cron
-    name: tableside-demo-reset
-    runtime: node
-    plan: free
-    region: singapore
-    rootDir: server
-    schedule: '0 * * * *'
-    buildCommand: npm ci
-    startCommand: npm run seed:demo
-    envVars:
-      - key: NODE_VERSION
-        value: '20'
-      - key: MONGO_URI
-        sync: false
+# The demo reset is NOT defined here. Render's cron job is a paid service type —
+# `plan: free` is rejected for `type: cron` — so the hourly reseed runs as a
+# GitHub Actions workflow instead (.github/workflows/demo-reset.yml), which is
+# free and needs no public endpoint to trigger it.

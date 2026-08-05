@@ -1,0 +1,57 @@
+name: Reset demo data
+
+# The public demo seeds live kitchen tickets at fixed ages (1-18 minutes), and
+# they keep ageing after the seed runs. Left alone for a few hours, every ticket
+# on the board reads red and "today's" orders have rolled into yesterday, so the
+# dashboard looks empty. This resets it hourly, and also undoes anything a
+# visitor changed while exploring.
+#
+# This lives here rather than in render.yaml because Render's cron job is a paid
+# service type. GitHub Actions is free for public repositories and needs no
+# publicly reachable reset endpoint, which would be a liability of its own.
+#
+# Requires one repository secret:
+#   MONGO_URI  — the same Atlas connection string the API uses
+#   Settings → Secrets and variables → Actions → New repository secret
+#
+# Note: GitHub disables scheduled workflows on repositories with no activity for
+# 60 days. If the demo goes stale, check whether the schedule was paused.
+
+on:
+  schedule:
+    - cron: '0 * * * *' # hourly, on the hour (UTC)
+  workflow_dispatch: # and on demand, from the Actions tab
+
+# Never let two reseeds overlap — they delete and rewrite the same documents.
+concurrency:
+  group: demo-reset
+  cancel-in-progress: false
+
+jobs:
+  reseed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install server dependencies
+        working-directory: server
+        run: npm ci
+
+      # The check lives inside the step rather than in an `if:` — the secrets
+      # context isn't available to step-level conditionals.
+      - name: Reseed demo data
+        working-directory: server
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+        run: |
+          if [ -z "$MONGO_URI" ]; then
+            echo "::error::MONGO_URI repository secret is not set — add it under Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          npm run seed:demo
