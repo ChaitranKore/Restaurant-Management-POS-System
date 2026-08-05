@@ -77,7 +77,7 @@ can't use it; the API is the actual gate.
 
 ## Getting started (local, no Docker)
 
-Requires Node.js 18+ and a running MongoDB instance (local or Atlas).
+Requires Node.js 20+ (Tailwind v4's native binary needs it) and a running MongoDB instance (local or Atlas).
 
 ### 1. Backend
 
