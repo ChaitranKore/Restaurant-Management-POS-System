@@ -18,6 +18,11 @@ services:
     name: tableside-api
     runtime: node
     plan: free
+    # Match the database's region (the Atlas cluster is in AWS Mumbai).
+    # Singapore is the nearest free-tier option; a US region adds roughly
+    # 200ms of round-trip to every query. A service's region is fixed at
+    # creation — changing it later means recreating the service.
+    region: singapore
     rootDir: server
     buildCommand: npm ci
     # `setup` builds the indexes and seeds categories, menu, tables and the
@@ -54,6 +59,7 @@ services:
     name: tableside-demo-reset
     runtime: node
     plan: free
+    region: singapore
     rootDir: server
     schedule: '0 * * * *'
     buildCommand: npm ci
